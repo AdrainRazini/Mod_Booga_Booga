@@ -1,3 +1,12 @@
+local VIM = game:GetService("VirtualInputManager")
+local UIS = game:GetService("UserInputService")
+local StarterGui = game:GetService("StarterGui")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+--== Carregar MouseModule ==--
+local success, MouseModule = pcall(function()
+	return loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/Mod_Booga_Booga/refs/heads/main/Player_IA/Move_Plr"))()
+end)
 
 -- ==========================================
 -- Booga Booga IA
@@ -204,3 +213,4 @@ Check_B = Regui.CreateCheckboxe(FarmTab, {
 		end)
 	end
 end)
+
