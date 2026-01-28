@@ -269,6 +269,12 @@ local function getButtonCenter(button)
 	return absPos + (absSize * anchor)
 end
 
+-- Referência
+G2L["Referencia"] = Instance.new("Frame")
+G2L["Referencia"].Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+G2L["Referencia"].Size = UDim2.new(0, 0, 0, 0)
+G2L["Referencia"].Position = UDim2.new(0.5, 0, 0.5, 0)
+G2L["Referencia"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 --===================--
 -- Window Guis Tabs --
 -- ⬇ ⬇ ⬇ ⬇ ⬇ ⬇ ⬇ ⬇
@@ -320,8 +326,10 @@ Locked = Regui.CreateToggleboxe(FarmTab, {
 	)
 
 	if state then
+	    local refPos = getButtonCenter(G2L["Referencia"])
+	    local mause = MouseModule.getMause
 		-- trava mouse
-		mause.LockMouse()
+		mause.LockMouse(refPos)
 	else
 		-- libera mouse
 		mause.UnlockMouse()
