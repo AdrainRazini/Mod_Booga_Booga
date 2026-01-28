@@ -1,0 +1,45 @@
+local Workspace = game:GetService("Workspace")
+
+local _Folders = {}
+
+_Folders.list = {
+	Resources = "Resources",     -- World
+	Itens = "Itens",             -- Items
+	Projectiles = "Projectiles"  -- Projéteis
+}
+
+-- Retorna a tabela de folders
+function _Folders.Get()
+	return _Folders.list
+end
+
+-- Define ou sobrescreve um folder
+function _Folders.Set(key, name)
+	if typeof(key) ~= "string" or typeof(name) ~= "string" then
+		warn("[Folders] Key e Name devem ser strings")
+		return
+	end
+
+	_Folders.list[key] = name
+end
+
+-- Adiciona e cria o folder no Workspace
+function _Folders.Add(key, name)
+	if _Folders.list[key] then
+		warn("[Folders] Folder já existe:", key)
+		return
+	end
+
+	_Folders.list[key] = name
+end
+
+-- Cria fisicamente no Workspace
+
+--Inicializa todas as pastas
+function _Folders.Init()
+	for _, name in pairs(_Folders.list) do
+		_Folders.Create(name)
+	end
+end
+
+return _Folders

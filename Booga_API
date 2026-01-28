@@ -170,7 +170,7 @@ end
 
 
 -- FLAGS
-local AF = {}
+local AF = {B = false}
 local AF_Timer = {}
 local PVP = {}
 local PVP_Timer = {}
@@ -182,3 +182,25 @@ local PVP_Timer = {}
 -- GUI
 Window = Regui.TabsWindow({Title=GuiName, Text="Booga Booga", Size=UDim2.new(0, 350, 0, 250), Icon_btn = true})
 FarmTab = Regui.CreateTab(Window,{Name="Farm"})
+
+
+
+Check_B = Regui.CreateCheckboxe(FarmTab, {
+	Text = "Ativar B",
+	Color = "White"
+}, function(state)
+	AF.B = state
+
+	if AntiAFK then
+		Regui.NotificationPerson(Window.Frame.Parent, {
+			Title = "Alert",
+			Text = "B ativado!",
+			Icon = "fa_envelope",
+			Tempo = 10,
+			Casch = {},
+			Sound = ""
+		}, function()
+			print("Notificação fechada!")
+		end)
+	end
+end)
