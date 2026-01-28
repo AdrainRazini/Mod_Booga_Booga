@@ -208,6 +208,12 @@ local lock_mouse = false
 local auto_clicking = false
 local clickTask = nil  -- referência para a thread de auto-click
 
+-- Referência
+G2L["Referencia"] = Instance.new("Frame")
+G2L["Referencia"].Parent = PlayerGui
+G2L["Referencia"].Size = UDim2.new(0, 0, 0, 0)
+G2L["Referencia"].Position = UDim2.new(0.5, 0, 0.5, 0)
+G2L["Referencia"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 
 --==============================
 -- FUNÇÕES
@@ -238,25 +244,7 @@ local function SafeClickUp(rightClick, duration)
 	duration = duration or 0.05
 	MouseModule.getMause.ClickUp(rightClick, duration)
 end
---[[
-local function SafeClickUpAuto(rightClick, duration, valueFunc)
-    if not AllowMouseControl or not MouseModule then return end
 
-    rightClick = rightClick or MouseModule.getMause.IsRightClick()
-    duration = duration or 0.05
-
-    -- Cria thread separada
-    task.spawn(function()
-        while typeof(valueFunc) == "function" and valueFunc() do
-            -- Chama ClickUp apenas se existir
-            if MouseModule.getMause.ClickUp then
-                MouseModule.getMause.ClickUp(rightClick, duration)
-            end
-            task.wait(duration)
-        end
-    end)
-end
-]]
 
 local function SafeClickUpAuto(rightClick, duration, valueFunc)
     if not AllowMouseControl or not MouseModule then return end
@@ -298,30 +286,16 @@ end
 Window = Regui.TabsWindow({Title=GuiName, Text="Booga Booga", Size=UDim2.new(0, 350, 0, 250), Icon_btn = true})
 FarmTab = Regui.CreateTab(Window,{Name="Farm"})
 
---[[
--- API
-MouseModule.getMause.Scroll(3)
-MouseModule.getMause.Circle(50,36,0.01)
-
-local startPos = Vector2.new(100,100)
-local endPos = Vector2.new(400,300)
-MouseModule.getMause.Drag(startPos,endPos,50,0.01)
-
-]]
-
-
--- SafeClickUp(false, 0.5) --esquerda
---SafeClickUp(true, 0.5) --direita
-
 Control = Regui.CreateCheckboxe(FarmTab, {
 	Text = "Ativar Control",
 	Color = "White"
 }, function(state)
-    AllowMouseControl = state
+    AllowMouseControl = not AllowMouseControl
+
 	if AllowMouseControl then
 		Regui.NotificationPerson(Window.Frame.Parent, {
 			Title = "Alert",
-			Text = "B ativado!",
+			Text = "B ativado!" .. AllowMouseControl ,
 			Icon = "fa_envelope",
 			Tempo = 10,
 			Casch = {},
@@ -345,7 +319,7 @@ Mouse = Regui.CreateCheckboxe(FarmTab, {
 
 		Regui.NotificationPerson(Window.Frame.Parent, {
 			Title = "Alert",
-			Text = "B ativado!",
+			Text = "ativado!" .. auto_clicking ,
 			Icon = "fa_envelope",
 			Tempo = 10,
 			Casch = {},
@@ -357,21 +331,18 @@ Mouse = Regui.CreateCheckboxe(FarmTab, {
 
 end)
 
+
 Lock_Mouse = Regui.CreateCheckboxe(FarmTab, {
 	Text = "Lock Mouse",
 	Color = "White"
 }, function(state)
 	if not MouseModule then return end
-
+    local refPos = getButtonCenter(G2L["Referencia"])
+	local mause = MouseModule.getMause
 	if state then
-		MouseModule.getMause.LockMouse()
+		MouseModule.getMause.LockMouse(refPos)
 	else
 		MouseModule.getMause.UnlockMouse()
 	end
 end)
 
-
-
-	local Camera = workspace.CurrentCamera
-	local target = Vector2.new(Camera.ViewportSize.X - 100, Camera.ViewportSize.Y - 100)
-	MoveMouseTo(target, 50, 0.01)
