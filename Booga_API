@@ -202,19 +202,8 @@ local AF_Timer = {}
 local PVP = {}
 local PVP_Timer = {}
 
-
 local G2L = {}
 
-G2L["ScreenGui"] = Instance.new("ScreenGui")
-G2L["ScreenGui"].Name = "MouseController"
-G2L["ScreenGui"].Parent = player:WaitForChild("PlayerGui")
-G2L["ScreenGui"].ResetOnSpawn = false
--- Referência
-G2L["Referencia"] = Instance.new("Frame")
-G2L["Referencia"].Parent = G2L["ScreenGui"]
-G2L["Referencia"].Size = UDim2.new(0, 0, 0, 0)
-G2L["Referencia"].Position = UDim2.new(0.5, 0, 0.5, 0)
-G2L["Referencia"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 
 --==============================
 -- FUNÇÕES
@@ -332,6 +321,16 @@ Mouse = Regui.CreateCheckboxe(FarmTab, {
 
 end)
 
+G2L["ScreenGui"] = Instance.new("ScreenGui")
+G2L["ScreenGui"].Name = "MouseController"
+G2L["ScreenGui"].Parent = PlayerGui
+G2L["ScreenGui"].ResetOnSpawn = false
+-- Referência
+G2L["Referencia"] = Instance.new("Frame")
+G2L["Referencia"].Parent = G2L["ScreenGui"]
+G2L["Referencia"].Size = UDim2.new(0, 0, 0, 0)
+G2L["Referencia"].Position = UDim2.new(0.5, 0, 0.5, 0)
+G2L["Referencia"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 
 Lock_Mouse = Regui.CreateCheckboxe(FarmTab, {
 	Text = "Lock Mouse",
