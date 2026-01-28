@@ -200,6 +200,7 @@ local Sliders = {maxRange = 0}
 
 local AF = {}
 local AF_Timer = {}
+
 local PVP = {}
 local PVP_Timer = {}
 
@@ -307,6 +308,25 @@ Atived = Regui.CreateToggleboxe(FarmTab, {
 	end
 end)
 
+Locked = Regui.CreateToggleboxe(FarmTab, {
+	Text = "Lock Mouse",
+	Color = "Yellow"
+}, function(state)
+	AUTO.lock_mouse = state
+
+	notify(
+		"Mouse Lock",
+		"Lock mouse: " .. tostring(state)
+	)
+
+	if state then
+		-- trava mouse
+		mause.LockMouse()
+	else
+		-- libera mouse
+		mause.UnlockMouse()
+	end
+end)
 
 Clicked = Regui.CreateToggleboxe(FarmTab, {
 	Text = "Auto Clicking",
@@ -321,30 +341,67 @@ Clicked = Regui.CreateToggleboxe(FarmTab, {
 
 	if state then
 		-- start loop de click
+		 SafeClickUpAuto(false, 0.05, function() return state end)
 	else
 		-- stop loop
 	end
 end)
 
-
-Locked = Regui.CreateToggleboxe(FarmTab, {
-	Text = "Lock Mouse",
+Scroll_ = Regui.CreateToggleboxe(FarmTab, {
+	Text = "Sroll",
 	Color = "Yellow"
 }, function(state)
-	AUTO.lock_mouse = state
+	AUTO.auto_clicking = state
 
 	notify(
-		"Mouse Lock",
-		"Lock mouse: " .. tostring(state)
+		"Auto Sroll",
+		"Auto Sroll: " .. tostring(state)
 	)
 
 	if state then
-		-- trava mouse
+		MouseModule.getMause.Scroll(3)
 	else
-		-- libera mouse
+		-- stop loop
 	end
 end)
 
+Circle = Regui.CreateToggleboxe(FarmTab, {
+	Text = "Circle",
+	Color = "Yellow"
+}, function(state)
+	AUTO.auto_clicking = state
+
+	notify(
+		"Auto Circle",
+		"Auto Circle: " .. tostring(state)
+	)
+
+	if state then
+		MouseModule.getMause.Circle(50,36,0.01)
+	else
+		-- stop loop
+	end
+end)
+
+Drag = Regui.CreateToggleboxe(FarmTab, {
+	Text = "Drag",
+	Color = "Yellow"
+}, function(state)
+	AUTO.auto_clicking = state
+
+	notify(
+		"Auto Drag",
+		"Auto Drag: " .. tostring(state)
+	)
+
+	if state then
+	local startPos = Vector2.new(100,100)
+	local endPos = Vector2.new(400,300)
+	MouseModule.getMause.Drag(startPos,endPos,50,0.01)
+	else
+		-- stop loop
+	end
+end)
 
 -- RANGE GLOBAL
 SliderInt_Range = Regui.CreateSliderInt(PlayerTab, {
