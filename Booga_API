@@ -195,7 +195,7 @@ end
 
 
 -- FLAGS
-local AUTO = {AllowMouseControl = false,  lock_mouse = false, auto_clicking = false, clickTask = nil}
+local AUTO = {AllowMouseControl = false,  lock_mouse = false, auto_clicking = false, clickTask = nil, Type = "Left"}
 local Sliders = {maxRange = 0}
 
 local AF = {}
@@ -240,10 +240,10 @@ end
 
 local function SafeClickUpAuto(rightClick, duration, valueFunc)
     if not  AUTO.auto_clicking or not MouseModule then return end
-
-    rightClick = rightClick or MouseModule.getMause.IsRightClick()
+    rightClick = AUTO.Type == "Right"
     duration = duration or 0.05
-
+	--SafeClickUp(false, 0.5) --esquerda
+	--SafeClickUp(true, 0.5) --direita
     task.spawn(function()
         while  AUTO.auto_clicking 
             and typeof(valueFunc) == "function" 
@@ -314,6 +314,20 @@ local function notify(title, text)
 		print("Notificação fechada!")
 	end)
 end
+
+
+
+-- SliderOption para escolher o tamanho da janela
+local Slider_Click= Regui.CreateSliderOption(FarmTab, {
+	Text = "Type Click",
+	Color = "White",
+	Background = "Blue",
+	Value = 1, -- valor inicial
+	Table = {"Left","Right"} -- opções
+}, function(state)
+	AUTO.Type = state -- atualiza a variável
+end)
+
 
 Locked = Regui.CreateToggleboxe(FarmTab, {
 	Text = "Lock Mouse",
