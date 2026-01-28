@@ -8,6 +8,21 @@ local success, MouseModule = pcall(function()
 	return loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/Mod_Booga_Booga/refs/heads/main/Player_IA/Move_Plr"))()
 end)
 
+if not success or not MouseModule then
+	warn("⚠ MouseModule não foi carregado. Modo seguro ativado.")
+	MouseModule = {}
+	MouseModule.getMause = {
+		GetPosition = function() return Vector2.new(0,0) end,
+		IsLocked = function() return false end,
+		LockMouse = function() end,
+		UnlockMouse = function() end,
+		Click = function() end,
+		ClickUp = function() end,
+		Scroll = function() end,
+		Circle = function() end,
+		Drag = function() end,
+	}
+end
 
 -- ==========================================
 -- Booga Booga IA
