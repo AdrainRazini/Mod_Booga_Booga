@@ -207,7 +207,7 @@ local G2L = {}
 
 G2L["ScreenGui"] = Instance.new("ScreenGui")
 G2L["ScreenGui"].Name = "MouseController"
-G2L["ScreenGui"].Parent = LocalPlayer:WaitForChild("PlayerGui")
+G2L["ScreenGui"].Parent = player:WaitForChild("PlayerGui")
 G2L["ScreenGui"].ResetOnSpawn = false
 -- Referência
 G2L["Referencia"] = Instance.new("Frame")
