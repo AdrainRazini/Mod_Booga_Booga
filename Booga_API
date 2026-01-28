@@ -34,6 +34,7 @@ local UserInputService = game:GetService("UserInputService")
 local StarterGui = game:GetService("StarterGui")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 
+local Camera = workspace.CurrentCamera
 local player = Players.LocalPlayer
 
 local Regui
@@ -195,7 +196,7 @@ end
 
 
 -- FLAGS
-local AUTO = {AllowMouseControl = false,  lock_mouse = false, auto_clicking = false, clickTask = nil, Type = "Left"}
+local AUTO = {AllowMouseControl = false,  lock_mouse = false, auto_clicking = false, clickTask = nil, Type = "Left",Coordinates = false}
 local Sliders = {maxRange = 0, Duration = 0}
 
 local AF = {}
@@ -463,3 +464,63 @@ SliderInt_Range = Regui.CreateSliderInt(FarmTab, {
 	Sliders.maxRange = state
 	print("Range atualizado:", Sliders.maxRange)
 end)
+
+local Info_Poss
+
+Coordinates = Regui.CreateToggleboxe(FarmTab, {
+	Text = "Coordinates",
+	Color = "Yellow"
+}, function(state)
+	AUTO.Coordinates = state
+
+	notify(
+		"Auto Drag",
+		"Auto Drag: " .. tostring(state)
+	)
+
+	if state then
+		-- Cria o pointer
+		Info_Poss = Instance.new("Frame")
+		Info_Poss.Name = "Pointer"
+		Info_Poss.Parent = Window.Frame.Parent
+		Info_Poss.Size = UDim2.fromOffset(4, 4)
+		Info_Poss.AnchorPoint = Vector2.new(0.5, 0.5)
+		Info_Poss.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		Info_Poss.BorderSizePixel = 0
+		Info_Poss.ZIndex = 999
+
+		-- Loop de atualização
+		Info_Poss._conn = RunService.RenderStepped:Connect(function()
+			if not AUTO.Coordinates or not Info_Poss then return end
+
+			local character = Player.Character
+			local hrp = character and character:FindFirstChild("HumanoidRootPart")
+			if not hrp then return end
+
+			-- Converte posição do mundo para tela
+			local screenPos, onScreen = Camera:WorldToViewportPoint(hrp.Position)
+			if onScreen then
+				Info_Poss.Position = UDim2.fromOffset(screenPos.X, screenPos.Y)
+			end
+		end)
+
+	else
+		-- Desliga tudo
+		if Info_Poss then
+			if Info_Poss._conn then
+				Info_Poss._conn:Disconnect()
+			end
+			Info_Poss:Destroy()
+			Info_Poss = nil
+		end
+	end
+end)
+
+
+
+
+--[[
+local success, Type_Folders = pcall(function()
+	return loadstring(game:HttpGet(""))()
+end)
+]]

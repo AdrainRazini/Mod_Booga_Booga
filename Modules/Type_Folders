@@ -33,7 +33,6 @@ function _Folders.Add(key, name)
 	_Folders.list[key] = name
 end
 
--- Cria fisicamente no Workspace
 
 --Inicializa todas as pastas
 function _Folders.Init()
