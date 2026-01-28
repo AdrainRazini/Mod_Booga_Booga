@@ -196,7 +196,7 @@ end
 
 -- FLAGS
 local AUTO = {AllowMouseControl = false,  lock_mouse = false, auto_clicking = false, clickTask = nil, Type = "Left"}
-local Sliders = {maxRange = 0}
+local Sliders = {maxRange = 0, Duration = 0}
 
 local AF = {}
 local AF_Timer = {}
@@ -351,6 +351,15 @@ Locked = Regui.CreateToggleboxe(FarmTab, {
 	end
 end)
 
+SliderInt_Duration = Regui.CreateSliderInt(FarmTab, {
+	Text = "Max Duration", 
+	Color = "Blue", 
+	Value = 0.05, Minimum = 0, Maximum = 60
+}, function(state)
+	Sliders.Duration = state
+	print("atualizado:", Sliders.maxRange)
+end)
+
 Clicked = Regui.CreateToggleboxe(FarmTab, {
 	Text = "Auto Clicking",
 	Color = "Yellow"
@@ -364,7 +373,7 @@ Clicked = Regui.CreateToggleboxe(FarmTab, {
 
 	if state then
 		-- start loop de click
-		 SafeClickUpAuto(false, 0.05, function() return state end)
+		 SafeClickUpAuto(false, Sliders.Duration, function() return state end)
 	else
 		-- stop loop
 	end
@@ -446,7 +455,7 @@ Drag = Regui.CreateToggleboxe(FarmTab, {
 end)
 
 -- RANGE GLOBAL
-SliderInt_Range = Regui.CreateSliderInt(PlayerTab, {
+SliderInt_Range = Regui.CreateSliderInt(FarmTab, {
 	Text = "Max Range", 
 	Color = "Blue", 
 	Value = 50, Minimum = 1, Maximum = 500
