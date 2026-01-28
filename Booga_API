@@ -272,9 +272,17 @@ end
 -- Referência
 G2L["Referencia"] = Instance.new("Frame")
 G2L["Referencia"].Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
-G2L["Referencia"].Size = UDim2.new(0, 0, 0, 0)
-G2L["Referencia"].Position = UDim2.new(0.5, 0, 0.5, 0)
+G2L["Referencia"].Size = UDim2.fromOffset(2, 2) -- tamanho da bolinha
+G2L["Referencia"].Position = UDim2.fromScale(0.5, 0.5)
+G2L["Referencia"].AnchorPoint = Vector2.new(0.5, 0.5)
 G2L["Referencia"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+G2L["Referencia"].BorderSizePixel = 0
+G2L["Referencia"].ZIndex = 999
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(1, 0)
+corner.Parent = G2L["Referencia"]
+
 --===================--
 -- Window Guis Tabs --
 -- ⬇ ⬇ ⬇ ⬇ ⬇ ⬇ ⬇ ⬇
