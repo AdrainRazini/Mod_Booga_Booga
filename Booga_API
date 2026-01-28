@@ -238,31 +238,23 @@ local function SafeClickUp(rightClick, duration)
 end
 
 
-local function SafeClickUpAuto(duration, valueFunc)
-	if not AUTO.auto_clicking then return end
-	if not MouseModule or not MouseModule.getMouse then return end
+local function SafeClickUpAuto(rightClick, duration, valueFunc)
+    if not  AUTO.auto_clicking or not MouseModule then return end
+    rightClick = AUTO.Type == "Right"
+    duration = duration or 0.05
+	--SafeClickUp(false, 0.5) --esquerda
+	--SafeClickUp(true, 0.5) --direita
+    task.spawn(function()
+        while  AUTO.auto_clicking 
+            and typeof(valueFunc) == "function" 
+            and valueFunc() do
 
-	local rightClick = (AUTO.Type == "Right")
-	duration = duration or 0.05
-
-	task.spawn(function()
-		while AUTO.auto_clicking do
-
-			if typeof(valueFunc) == "function" then
-				local ok, result = pcall(valueFunc)
-				if not ok or not result then
-					task.wait()
-					continue
-				end
-			end
-
-			if MouseModule.getMouse.ClickUp then
-				MouseModule.getMouse.ClickUp(rightClick, duration)
-			end
-
-			task.wait(duration)
-		end
-	end)
+            if MouseModule.getMause.ClickUp then
+                MouseModule.getMause.ClickUp(rightClick, duration)
+            end
+            task.wait(duration)
+        end
+    end)
 end
 
 
