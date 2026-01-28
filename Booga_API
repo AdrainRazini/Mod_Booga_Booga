@@ -196,21 +196,22 @@ end
 
 
 -- FLAGS
+local AUTO = {AllowMouseControl = false,  lock_mouse = false, auto_clicking = false, clickTask = nil}
 local AF = {B = false}
 local AF_Timer = {}
 local PVP = {}
 local PVP_Timer = {}
 
---== Variáveis ==--
-local AllowMouseControl = false
-local G2L = {}
-local lock_mouse = false
-local auto_clicking = false
-local clickTask = nil  -- referência para a thread de auto-click
 
+local G2L = {}
+
+G2L["ScreenGui"] = Instance.new("ScreenGui")
+G2L["ScreenGui"].Name = "MouseController"
+G2L["ScreenGui"].Parent = LocalPlayer:WaitForChild("PlayerGui")
+G2L["ScreenGui"].ResetOnSpawn = false
 -- Referência
 G2L["Referencia"] = Instance.new("Frame")
-G2L["Referencia"].Parent = PlayerGui
+G2L["Referencia"].Parent = G2L["ScreenGui"]
 G2L["Referencia"].Size = UDim2.new(0, 0, 0, 0)
 G2L["Referencia"].Position = UDim2.new(0.5, 0, 0.5, 0)
 G2L["Referencia"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -219,7 +220,7 @@ G2L["Referencia"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 -- FUNÇÕES
 --==============================
 local function MoveMouseTo(targetPos, steps, delay)
-	if not AllowMouseControl or not MouseModule then return end
+	if not  AUTO.AllowMouseControl or not MouseModule then return end
 	steps = steps or 20
 	delay = delay or 0.01
 
@@ -239,7 +240,7 @@ local function MoveMouseTo(targetPos, steps, delay)
 end
 
 local function SafeClickUp(rightClick, duration)
-	if not AllowMouseControl or not MouseModule then return end
+	if not  AUTO.AllowMouseControl or not MouseModule then return end
 	rightClick = rightClick or MouseModule.getMause.IsRightClick()
 	duration = duration or 0.05
 	MouseModule.getMause.ClickUp(rightClick, duration)
@@ -247,13 +248,13 @@ end
 
 
 local function SafeClickUpAuto(rightClick, duration, valueFunc)
-    if not AllowMouseControl or not MouseModule then return end
+    if not  AUTO.AllowMouseControl or not MouseModule then return end
 
     rightClick = rightClick or MouseModule.getMause.IsRightClick()
     duration = duration or 0.05
 
     task.spawn(function()
-        while AllowMouseControl 
+        while  AUTO.AllowMouseControl 
             and typeof(valueFunc) == "function" 
             and valueFunc() do
 
@@ -290,12 +291,12 @@ Control = Regui.CreateCheckboxe(FarmTab, {
 	Text = "Ativar Control",
 	Color = "White"
 }, function(state)
-    AllowMouseControl = not AllowMouseControl
+    AUTO.AllowMouseControl = state
 
-	if AllowMouseControl then
+	if AUTO.AllowMouseControl then
 		Regui.NotificationPerson(Window.Frame.Parent, {
 			Title = "Alert",
-			Text = "B ativado!" .. AllowMouseControl ,
+			Text = "B ativado!" .. AUTO.AllowMouseControl ,
 			Icon = "fa_envelope",
 			Tempo = 10,
 			Casch = {},
@@ -311,9 +312,9 @@ Mouse = Regui.CreateCheckboxe(FarmTab, {
 	Text = "Auto Click",
 	Color = "White"
 }, function(state)
-    auto_clicking = state
+    AUTO.auto_clicking = state
 
-	if auto_clicking then
+	if AUTO.auto_clicking then
 		 -- Chama apenas uma vez, loop interno faz o resto
         SafeClickUpAuto(false, 0.05, function() return AF.B end)
 
@@ -337,12 +338,15 @@ Lock_Mouse = Regui.CreateCheckboxe(FarmTab, {
 	Color = "White"
 }, function(state)
 	if not MouseModule then return end
+
     local refPos = getButtonCenter(G2L["Referencia"])
 	local mause = MouseModule.getMause
+
 	if state then
 		MouseModule.getMause.LockMouse(refPos)
 	else
 		MouseModule.getMause.UnlockMouse()
 	end
+
 end)
 
