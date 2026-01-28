@@ -191,7 +191,7 @@ Check_B = Regui.CreateCheckboxe(FarmTab, {
 }, function(state)
 	AF.B = state
 
-	if AntiAFK then
+	if AF.B then
 		Regui.NotificationPerson(Window.Frame.Parent, {
 			Title = "Alert",
 			Text = "B ativado!",
