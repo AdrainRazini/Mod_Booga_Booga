@@ -8,6 +8,7 @@ local success, MouseModule = pcall(function()
 	return loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/Mod_Booga_Booga/refs/heads/main/Player_IA/Move_Plr"))()
 end)
 
+
 -- ==========================================
 -- Booga Booga IA
 -- ==========================================
@@ -184,6 +185,57 @@ local AF_Timer = {}
 local PVP = {}
 local PVP_Timer = {}
 
+local AllowMouseControl = false
+
+--==============================
+-- FUNÇÕES
+--==============================
+local function MoveMouseTo(targetPos, steps, delay)
+	if not AllowMouseControl or not MouseModule then return end
+	steps = steps or 20
+	delay = delay or 0.01
+
+	local startPos = MouseModule.getMause.GetPosition()
+	local deltaX = (targetPos.X - startPos.X) / steps
+	local deltaY = (targetPos.Y - startPos.Y) / steps
+
+	for i = 1, steps do
+		local newPos = Vector2.new(startPos.X + deltaX * i, startPos.Y + deltaY * i)
+		if MouseModule.getMause.IsLocked() then
+			MouseModule.getMause.LockMouse(newPos)
+		else
+			VirtualInputManager:SendMouseMoveEvent(newPos.X, newPos.Y, nil)
+		end
+		task.wait(delay)
+	end
+end
+
+local function SafeClickUp(rightClick, duration)
+	if not AllowMouseControl or not MouseModule then return end
+	rightClick = rightClick or MouseModule.getMause.IsRightClick()
+	duration = duration or 0.05
+	MouseModule.getMause.ClickUp(rightClick, duration)
+end
+
+local function SafeClickUpAuto(rightClick, duration, valueFunc)
+    if not AllowMouseControl or not MouseModule then return end
+
+    rightClick = rightClick or MouseModule.getMause.IsRightClick()
+    duration = duration or 0.05
+
+    task.spawn(function()
+        while AllowMouseControl 
+            and typeof(valueFunc) == "function" 
+            and valueFunc() do
+
+            if MouseModule.getMause.ClickUp then
+                MouseModule.getMause.ClickUp(rightClick, duration)
+            end
+            task.wait(duration)
+        end
+    end)
+end
+
 --===================--
 -- Window Guis Tabs --
 -- ⬇ ⬇ ⬇ ⬇ ⬇ ⬇ ⬇ ⬇
@@ -192,15 +244,27 @@ local PVP_Timer = {}
 Window = Regui.TabsWindow({Title=GuiName, Text="Booga Booga", Size=UDim2.new(0, 350, 0, 250), Icon_btn = true})
 FarmTab = Regui.CreateTab(Window,{Name="Farm"})
 
+--[[
+-- API
+MouseModule.getMause.Scroll(3)
+MouseModule.getMause.Circle(50,36,0.01)
 
+local startPos = Vector2.new(100,100)
+local endPos = Vector2.new(400,300)
+MouseModule.getMause.Drag(startPos,endPos,50,0.01)
+
+]]
 
 Check_B = Regui.CreateCheckboxe(FarmTab, {
 	Text = "Ativar B",
 	Color = "White"
 }, function(state)
-	AF.B = state
+    AllowMouseControl = state
 
-	if AF.B then
+	if AllowMouseControl then
+		 -- Chama apenas uma vez, loop interno faz o resto
+        SafeClickUpAuto(false, 0.05, function() return AF.B end)
+
 		Regui.NotificationPerson(Window.Frame.Parent, {
 			Title = "Alert",
 			Text = "B ativado!",
@@ -212,5 +276,6 @@ Check_B = Regui.CreateCheckboxe(FarmTab, {
 			print("Notificação fechada!")
 		end)
 	end
+
 end)
 
