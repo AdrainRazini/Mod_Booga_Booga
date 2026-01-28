@@ -239,13 +239,13 @@ end
 
 
 local function SafeClickUpAuto(rightClick, duration, valueFunc)
-    if not  AUTO.AllowMouseControl or not MouseModule then return end
+    if not  AUTO.auto_clicking or not MouseModule then return end
 
     rightClick = rightClick or MouseModule.getMause.IsRightClick()
     duration = duration or 0.05
 
     task.spawn(function()
-        while  AUTO.AllowMouseControl 
+        while  AUTO.auto_clicking 
             and typeof(valueFunc) == "function" 
             and valueFunc() do
 
@@ -305,24 +305,6 @@ local function notify(title, text)
 	end)
 end
 
-Atived = Regui.CreateToggleboxe(FarmTab, {
-	Text = "AllowMouseControl",
-	Color = "Yellow"
-}, function(state)
-	AUTO.AllowMouseControl = state
-
-	notify(
-		"Mouse Control",
-		"AllowMouseControl: " .. tostring(state)
-	)
-
-	if state then
-		-- ativa controle do mouse
-	else
-		-- desativa controle do mouse
-	end
-end)
-
 Locked = Regui.CreateToggleboxe(FarmTab, {
 	Text = "Lock Mouse",
 	Color = "Yellow"
@@ -361,6 +343,25 @@ Clicked = Regui.CreateToggleboxe(FarmTab, {
 		 SafeClickUpAuto(false, 0.05, function() return state end)
 	else
 		-- stop loop
+	end
+end)
+
+
+Atived = Regui.CreateToggleboxe(FarmTab, {
+	Text = "AllowMouseControl",
+	Color = "Yellow"
+}, function(state)
+	AUTO.AllowMouseControl = state
+
+	notify(
+		"Mouse Control",
+		"AllowMouseControl: " .. tostring(state)
+	)
+
+	if state then
+		-- ativa controle do mouse
+	else
+		-- desativa controle do mouse
 	end
 end)
 
