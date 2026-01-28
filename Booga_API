@@ -200,7 +200,13 @@ local AF_Timer = {}
 local PVP = {}
 local PVP_Timer = {}
 
+--== Variáveis ==--
 local AllowMouseControl = false
+local G2L = {}
+local lock_mouse = false
+local auto_clicking = false
+local clickTask = nil  -- referência para a thread de auto-click
+
 
 --==============================
 -- FUNÇÕES
@@ -231,6 +237,25 @@ local function SafeClickUp(rightClick, duration)
 	duration = duration or 0.05
 	MouseModule.getMause.ClickUp(rightClick, duration)
 end
+--[[
+local function SafeClickUpAuto(rightClick, duration, valueFunc)
+    if not AllowMouseControl or not MouseModule then return end
+
+    rightClick = rightClick or MouseModule.getMause.IsRightClick()
+    duration = duration or 0.05
+
+    -- Cria thread separada
+    task.spawn(function()
+        while typeof(valueFunc) == "function" and valueFunc() do
+            -- Chama ClickUp apenas se existir
+            if MouseModule.getMause.ClickUp then
+                MouseModule.getMause.ClickUp(rightClick, duration)
+            end
+            task.wait(duration)
+        end
+    end)
+end
+]]
 
 local function SafeClickUpAuto(rightClick, duration, valueFunc)
     if not AllowMouseControl or not MouseModule then return end
@@ -251,6 +276,19 @@ local function SafeClickUpAuto(rightClick, duration, valueFunc)
     end)
 end
 
+
+-- Função para pegar o centro real de qualquer botão/frame
+local function getButtonCenter(button)
+	-- Posição do canto superior esquerdo
+	local absPos = button.AbsolutePosition
+	local absSize = button.AbsoluteSize
+	local anchor = button.AnchorPoint or Vector2.new(0,0)
+
+	-- Fórmula universal (compensa automaticamente o AnchorPoint)
+	return absPos + (absSize * anchor)
+end
+
+
 --===================--
 -- Window Guis Tabs --
 -- ⬇ ⬇ ⬇ ⬇ ⬇ ⬇ ⬇ ⬇
@@ -270,13 +308,37 @@ MouseModule.getMause.Drag(startPos,endPos,50,0.01)
 
 ]]
 
-Check_B = Regui.CreateCheckboxe(FarmTab, {
-	Text = "Ativar B",
+
+-- SafeClickUp(false, 0.5) --esquerda
+--SafeClickUp(true, 0.5) --direita
+
+Control = Regui.CreateCheckboxe(FarmTab, {
+	Text = "Ativar Control",
 	Color = "White"
 }, function(state)
     AllowMouseControl = state
-
 	if AllowMouseControl then
+		Regui.NotificationPerson(Window.Frame.Parent, {
+			Title = "Alert",
+			Text = "B ativado!",
+			Icon = "fa_envelope",
+			Tempo = 10,
+			Casch = {},
+			Sound = ""
+		}, function()
+			print("Notificação fechada!")
+		end)
+	end
+
+end)
+
+Mouse = Regui.CreateCheckboxe(FarmTab, {
+	Text = "Auto Click",
+	Color = "White"
+}, function(state)
+    auto_clicking = state
+
+	if auto_clicking then
 		 -- Chama apenas uma vez, loop interno faz o resto
         SafeClickUpAuto(false, 0.05, function() return AF.B end)
 
@@ -294,3 +356,21 @@ Check_B = Regui.CreateCheckboxe(FarmTab, {
 
 end)
 
+Lock_Mouse = Regui.CreateCheckboxe(FarmTab, {
+	Text = "Lock Mouse",
+	Color = "White"
+}, function(state)
+	if not MouseModule then return end
+
+	if state then
+		MouseModule.getMause.LockMouse()
+	else
+		MouseModule.getMause.UnlockMouse()
+	end
+end)
+
+
+
+	local Camera = workspace.CurrentCamera
+	local target = Vector2.new(Camera.ViewportSize.X - 100, Camera.ViewportSize.Y - 100)
+	MoveMouseTo(target, 50, 0.01)
