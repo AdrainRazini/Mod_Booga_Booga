@@ -34,7 +34,6 @@ local UserInputService = game:GetService("UserInputService")
 local StarterGui = game:GetService("StarterGui")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 
-local Camera = workspace.CurrentCamera
 local player = Players.LocalPlayer
 
 local Regui
@@ -240,22 +239,22 @@ end
 
 
 local function SafeClickUpAuto(rightClick, duration, valueFunc)
-    if not  AUTO.auto_clicking or not MouseModule then return end
-    rightClick = AUTO.Type == "Right"
-    duration = duration or 0.05
+	if not  AUTO.auto_clicking or not MouseModule then return end
+	rightClick = AUTO.Type == "Right"
+	duration = duration or 0.05
 	--SafeClickUp(false, 0.5) --esquerda
 	--SafeClickUp(true, 0.5) --direita
-    task.spawn(function()
-        while  AUTO.auto_clicking 
-            and typeof(valueFunc) == "function" 
-            and valueFunc() do
+	task.spawn(function()
+		while  AUTO.auto_clicking 
+			and typeof(valueFunc) == "function" 
+			and valueFunc() do
 
-            if MouseModule.getMause.ClickUp then
-                MouseModule.getMause.ClickUp(rightClick, duration)
-            end
-            task.wait(duration)
-        end
-    end)
+			if MouseModule.getMause.ClickUp then
+				MouseModule.getMause.ClickUp(rightClick, duration)
+			end
+			task.wait(duration)
+		end
+	end)
 end
 
 
@@ -342,8 +341,8 @@ Locked = Regui.CreateToggleboxe(FarmTab, {
 	)
 
 	if state then
-	    local refPos = getButtonCenter(G2L["Referencia"])
-	    local mause = MouseModule.getMause
+		local refPos = getButtonCenter(G2L["Referencia"])
+		local mause = MouseModule.getMause
 		-- trava mouse
 		mause.LockMouse(refPos)
 	else
@@ -374,7 +373,7 @@ Clicked = Regui.CreateToggleboxe(FarmTab, {
 
 	if state then
 		-- start loop de click
-		 SafeClickUpAuto(false, Sliders.Duration, function() return state end)
+		SafeClickUpAuto(false, Sliders.Duration, function() return state end)
 	else
 		-- stop loop
 	end
@@ -447,9 +446,9 @@ Drag = Regui.CreateToggleboxe(FarmTab, {
 	)
 
 	if state then
-	local startPos = Vector2.new(100,100)
-	local endPos = Vector2.new(400,300)
-	MouseModule.getMause.Drag(startPos,endPos,50,0.01)
+		local startPos = Vector2.new(100,100)
+		local endPos = Vector2.new(400,300)
+		MouseModule.getMause.Drag(startPos,endPos,50,0.01)
 	else
 		-- stop loop
 	end
@@ -465,57 +464,60 @@ SliderInt_Range = Regui.CreateSliderInt(FarmTab, {
 	print("Range atualizado:", Sliders.maxRange)
 end)
 
-local Info_Poss
 
+local Info_Poss = false
+
+-- Frame base
+G2L["LabelPoss"] = Instance.new("Frame")
+G2L["LabelPoss"].Parent = Window.Frame.Parent
+G2L["LabelPoss"].Size = UDim2.new(0, 200, 0, 30)
+G2L["LabelPoss"].Position = UDim2.new(0.5, -100, 0, 10)
+G2L["LabelPoss"].BackgroundTransparency = 0.2
+G2L["LabelPoss"].Visible = false
+
+-- Label
+local TextLabel = Instance.new("TextLabel")
+TextLabel.Parent = G2L["LabelPoss"]
+TextLabel.Size = UDim2.new(1, 0, 1, 0)
+TextLabel.BackgroundTransparency = 1
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
+TextLabel.TextScaled = true
+TextLabel.Text = "X: 0 | Y: 0 | Z: 0"
+
+-- Função de update
+function UpdatePoss(text)
+	TextLabel.Text = text
+end
+
+-- Atualização contínua
+RunService.RenderStepped:Connect(function()
+	if not Info_Poss then return end
+
+	local char = player.Character
+	local hrp = char and char:FindFirstChild("HumanoidRootPart")
+	if not hrp then return end
+
+	local pos = hrp.Position
+	UpdatePoss(string.format(
+		"X: %.1f | Y: %.1f | Z: %.1f",
+		pos.X, pos.Y, pos.Z
+		))
+end)
+
+-- Toggle
 Coordinates = Regui.CreateToggleboxe(FarmTab, {
 	Text = "Coordinates",
 	Color = "Yellow"
 }, function(state)
 	AUTO.Coordinates = state
+	Info_Poss = state
+	G2L["LabelPoss"].Visible = state
 
 	notify(
 		"Auto Drag",
-		"Auto Drag: " .. tostring(state)
+		"Coordinates: " .. tostring(state)
 	)
-
-	if state then
-		-- Cria o pointer
-		Info_Poss = Instance.new("Frame")
-		Info_Poss.Name = "Pointer"
-		Info_Poss.Parent = Window.Frame.Parent
-		Info_Poss.Size = UDim2.fromOffset(4, 4)
-		Info_Poss.AnchorPoint = Vector2.new(0.5, 0.5)
-		Info_Poss.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		Info_Poss.BorderSizePixel = 0
-		Info_Poss.ZIndex = 999
-
-		-- Loop de atualização
-		Info_Poss._conn = RunService.RenderStepped:Connect(function()
-			if not AUTO.Coordinates or not Info_Poss then return end
-
-			local character = Player.Character
-			local hrp = character and character:FindFirstChild("HumanoidRootPart")
-			if not hrp then return end
-
-			-- Converte posição do mundo para tela
-			local screenPos, onScreen = Camera:WorldToViewportPoint(hrp.Position)
-			if onScreen then
-				Info_Poss.Position = UDim2.fromOffset(screenPos.X, screenPos.Y)
-			end
-		end)
-
-	else
-		-- Desliga tudo
-		if Info_Poss then
-			if Info_Poss._conn then
-				Info_Poss._conn:Disconnect()
-			end
-			Info_Poss:Destroy()
-			Info_Poss = nil
-		end
-	end
 end)
-
 
 
 
