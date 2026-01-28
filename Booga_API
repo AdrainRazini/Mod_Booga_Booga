@@ -238,21 +238,31 @@ local function SafeClickUp(rightClick, duration)
 end
 
 
-local function SafeClickUpAuto(rightClick, duration, valueFunc)
-    if not  AUTO.auto_clicking or not MouseModule then return end
-    task.spawn(function()
-        while  AUTO.auto_clicking 
-		    rightClick = AUTO.Type == "Right"
-            duration = duration or 0.05
-            and typeof(valueFunc) == "function" 
-            and valueFunc() do
+local function SafeClickUpAuto(duration, valueFunc)
+	if not AUTO.auto_clicking then return end
+	if not MouseModule or not MouseModule.getMouse then return end
 
-            if MouseModule.getMause.ClickUp then
-                MouseModule.getMause.ClickUp(rightClick, duration)
-            end
-            task.wait(duration)
-        end
-    end)
+	local rightClick = (AUTO.Type == "Right")
+	duration = duration or 0.05
+
+	task.spawn(function()
+		while AUTO.auto_clicking do
+
+			if typeof(valueFunc) == "function" then
+				local ok, result = pcall(valueFunc)
+				if not ok or not result then
+					task.wait()
+					continue
+				end
+			end
+
+			if MouseModule.getMouse.ClickUp then
+				MouseModule.getMouse.ClickUp(rightClick, duration)
+			end
+
+			task.wait(duration)
+		end
+	end)
 end
 
 
@@ -284,6 +294,15 @@ G2L["Pointer"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 G2L["Pointer"].BorderSizePixel = 0
 G2L["Pointer"].ZIndex = 999
 
+-- Referência
+G2L["Referencia"] = Instance.new("Frame")
+G2L["Referencia"].Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+G2L["Referencia"].Size = UDim2.fromOffset(2, 2) -- tamanho da bolinha
+G2L["Referencia"].Position = UDim2.fromScale(0.5, 0.5)
+G2L["Referencia"].AnchorPoint = Vector2.new(0.5, 0.5)
+G2L["Referencia"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+G2L["Referencia"].BorderSizePixel = 0
+G2L["Referencia"].ZIndex = 999
 
 local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(1, 0)
@@ -330,7 +349,7 @@ Locked = Regui.CreateToggleboxe(FarmTab, {
 	)
 
 	if state then
-	    local refPos = getButtonCenter(G2L["Pointer"])
+	    local refPos = getButtonCenter(G2L["Referencia"])
 	    local mause = MouseModule.getMause
 		-- trava mouse
 		mause.LockMouse(refPos)
