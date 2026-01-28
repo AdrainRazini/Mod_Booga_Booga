@@ -5,7 +5,7 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 
 --== Carregar MouseModule ==--
 local success, MouseModule = pcall(function()
-	return loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/Mod_Booga_Booga/refs/heads/main/Player_IA/Move_Plr"))()
+	return loadstring(game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/mastermod/refs/heads/main/module/data.lua"))()
 end)
 
 if not success or not MouseModule then
@@ -23,6 +23,7 @@ if not success or not MouseModule then
 		Drag = function() end,
 	}
 end
+
 
 -- ==========================================
 -- Booga Booga IA
