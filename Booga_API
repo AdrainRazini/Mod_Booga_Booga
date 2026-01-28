@@ -277,8 +277,18 @@ end
 Window = Regui.TabsWindow({Title=GuiName, Text="Booga Booga", Size=UDim2.new(0, 350, 0, 250), Icon_btn = true})
 
 -- Referência
+G2L["Pointer"] = Instance.new("Frame")
+G2L["Pointer"].Parent = Window.Frame.Parent
+G2L["Pointer"].Size = UDim2.fromOffset(2, 2) -- tamanho da bolinha
+G2L["Pointer"].Position = UDim2.fromScale(0.5, 0.5)
+G2L["Pointer"].AnchorPoint = Vector2.new(0.5, 0.5)
+G2L["Pointer"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+G2L["Pointer"].BorderSizePixel = 0
+G2L["Pointer"].ZIndex = 999
+
+-- Referência
 G2L["Referencia"] = Instance.new("Frame")
-G2L["Referencia"].Parent = Window.Frame.Parent
+G2L["Referencia"].Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
 G2L["Referencia"].Size = UDim2.fromOffset(2, 2) -- tamanho da bolinha
 G2L["Referencia"].Position = UDim2.fromScale(0.5, 0.5)
 G2L["Referencia"].AnchorPoint = Vector2.new(0.5, 0.5)
