@@ -196,7 +196,9 @@ end
 
 -- FLAGS
 local AUTO = {AllowMouseControl = false,  lock_mouse = false, auto_clicking = false, clickTask = nil}
-local AF = {B = false}
+local Sliders = {maxRange = 0}
+
+local AF = {}
 local AF_Timer = {}
 local PVP = {}
 local PVP_Timer = {}
@@ -287,7 +289,7 @@ local function notify(title, text)
 	end)
 end
 
-Regui.CreateToggleboxe(FarmTab, {
+Atived = Regui.CreateToggleboxe(FarmTab, {
 	Text = "AllowMouseControl",
 	Color = "Yellow"
 }, function(state)
@@ -305,7 +307,8 @@ Regui.CreateToggleboxe(FarmTab, {
 	end
 end)
 
-Regui.CreateToggleboxe(FarmTab, {
+
+Clicked = Regui.CreateToggleboxe(FarmTab, {
 	Text = "Auto Clicking",
 	Color = "Yellow"
 }, function(state)
@@ -324,7 +327,7 @@ Regui.CreateToggleboxe(FarmTab, {
 end)
 
 
-Regui.CreateToggleboxe(FarmTab, {
+Locked = Regui.CreateToggleboxe(FarmTab, {
 	Text = "Lock Mouse",
 	Color = "Yellow"
 }, function(state)
@@ -340,4 +343,15 @@ Regui.CreateToggleboxe(FarmTab, {
 	else
 		-- libera mouse
 	end
+end)
+
+
+-- RANGE GLOBAL
+SliderInt_Range = Regui.CreateSliderInt(PlayerTab, {
+	Text = "Max Range", 
+	Color = "Blue", 
+	Value = 50, Minimum = 1, Maximum = 500
+}, function(state)
+	Sliders.maxRange = state
+	print("Range atualizado:", Sliders.maxRange)
 end)
