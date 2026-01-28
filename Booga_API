@@ -1,7 +1,3 @@
-local VIM = game:GetService("VirtualInputManager")
-local UIS = game:GetService("UserInputService")
-local StarterGui = game:GetService("StarterGui")
-local VirtualInputManager = game:GetService("VirtualInputManager")
 
 --== Carregar MouseModule ==--
 local success, MouseModule = pcall(function()
@@ -35,6 +31,9 @@ local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 local UserInputService = game:GetService("UserInputService")
+local StarterGui = game:GetService("StarterGui")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
 local player = Players.LocalPlayer
 
 local Regui
@@ -267,7 +266,6 @@ local function getButtonCenter(button)
 	return absPos + (absSize * anchor)
 end
 
-
 --===================--
 -- Window Guis Tabs --
 -- ⬇ ⬇ ⬇ ⬇ ⬇ ⬇ ⬇ ⬇
@@ -276,76 +274,70 @@ end
 Window = Regui.TabsWindow({Title=GuiName, Text="Booga Booga", Size=UDim2.new(0, 350, 0, 250), Icon_btn = true})
 FarmTab = Regui.CreateTab(Window,{Name="Farm"})
 
-Control = Regui.CreateCheckboxe(FarmTab, {
-	Text = "Ativar Control",
-	Color = "White"
+local function notify(title, text)
+	Regui.NotificationPerson(Window.Frame.Parent, {
+		Title = title,
+		Text = text,
+		Icon = "fa_envelope",
+		Tempo = 5,
+		Casch = {},
+		Sound = ""
+	}, function()
+		print("Notificação fechada!")
+	end)
+end
+
+Regui.CreateToggleboxe(FarmTab, {
+	Text = "AllowMouseControl",
+	Color = "Yellow"
 }, function(state)
-    AUTO.AllowMouseControl = state
+	AUTO.AllowMouseControl = state
 
-	if AUTO.AllowMouseControl then
-		Regui.NotificationPerson(Window.Frame.Parent, {
-			Title = "Alert",
-			Text = "B ativado!" .. AUTO.AllowMouseControl ,
-			Icon = "fa_envelope",
-			Tempo = 10,
-			Casch = {},
-			Sound = ""
-		}, function()
-			print("Notificação fechada!")
-		end)
-	end
-
-end)
-
-Mouse = Regui.CreateCheckboxe(FarmTab, {
-	Text = "Auto Click",
-	Color = "White"
-}, function(state)
-    AUTO.auto_clicking = state
-
-	if AUTO.auto_clicking then
-		 -- Chama apenas uma vez, loop interno faz o resto
-        SafeClickUpAuto(false, 0.05, function() return AF.B end)
-
-		Regui.NotificationPerson(Window.Frame.Parent, {
-			Title = "Alert",
-			Text = "ativado!" .. auto_clicking ,
-			Icon = "fa_envelope",
-			Tempo = 10,
-			Casch = {},
-			Sound = ""
-		}, function()
-			print("Notificação fechada!")
-		end)
-	end
-
-end)
-
-G2L["ScreenGui"] = Instance.new("ScreenGui")
-G2L["ScreenGui"].Name = "MouseController"
-G2L["ScreenGui"].Parent = PlayerGui
-G2L["ScreenGui"].ResetOnSpawn = false
--- Referência
-G2L["Referencia"] = Instance.new("Frame")
-G2L["Referencia"].Parent = G2L["ScreenGui"]
-G2L["Referencia"].Size = UDim2.new(0, 0, 0, 0)
-G2L["Referencia"].Position = UDim2.new(0.5, 0, 0.5, 0)
-G2L["Referencia"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-
-Lock_Mouse = Regui.CreateCheckboxe(FarmTab, {
-	Text = "Lock Mouse",
-	Color = "White"
-}, function(state)
-	if not MouseModule then return end
-
-    local refPos = getButtonCenter(G2L["Referencia"])
-	local mause = MouseModule.getMause
+	notify(
+		"Mouse Control",
+		"AllowMouseControl: " .. tostring(state)
+	)
 
 	if state then
-		MouseModule.getMause.LockMouse(refPos)
+		-- ativa controle do mouse
 	else
-		MouseModule.getMause.UnlockMouse()
+		-- desativa controle do mouse
 	end
-
 end)
 
+Regui.CreateToggleboxe(FarmTab, {
+	Text = "Auto Clicking",
+	Color = "Yellow"
+}, function(state)
+	AUTO.auto_clicking = state
+
+	notify(
+		"Auto Click",
+		"Auto clicking: " .. tostring(state)
+	)
+
+	if state then
+		-- start loop de click
+	else
+		-- stop loop
+	end
+end)
+
+
+Regui.CreateToggleboxe(FarmTab, {
+	Text = "Lock Mouse",
+	Color = "Yellow"
+}, function(state)
+	AUTO.lock_mouse = state
+
+	notify(
+		"Mouse Lock",
+		"Lock mouse: " .. tostring(state)
+	)
+
+	if state then
+		-- trava mouse
+	else
+		-- libera mouse
+	end
+end)
