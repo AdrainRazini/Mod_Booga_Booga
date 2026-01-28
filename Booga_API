@@ -167,3 +167,18 @@ else
 
 
 end
+
+
+-- FLAGS
+local AF = {}
+local AF_Timer = {}
+local PVP = {}
+local PVP_Timer = {}
+
+--===================--
+-- Window Guis Tabs --
+-- ⬇ ⬇ ⬇ ⬇ ⬇ ⬇ ⬇ ⬇
+--===================--
+-- GUI
+Window = Regui.TabsWindow({Title=GuiName, Text="Booga Booga", Size=UDim2.new(0, 350, 0, 250), Icon_btn = true})
+FarmTab = Regui.CreateTab(Window,{Name="Farm"})
